@@ -42,9 +42,7 @@ async def get_endpoint_by_project(slug):
 
     for dt in json_data['data']:
         if folder_before == '' or folder_before != dt['folder_name']:
-            if folder_before != '':
-                res += "========== + ========== + ========== \n\n"
-            res += f"**{'Folder '+dt['folder_name'] if dt['folder_name'] else '*No Folder*'}**\n\n"
+            res += f"**{'========== + Folder '+dt['folder_name']+' + ==========' if dt['folder_name'] else '*========== + No Folder + ==========*'}**\n\n"
             folder_before = dt['folder_name']
 
         res += (
@@ -58,3 +56,28 @@ async def get_endpoint_by_project(slug):
         )
 
     return res if res != '' else '*No Endpoint Found!*'
+
+async def get_history_run_endpoint(id):
+    response = requests.get(base_url+'/api/v1/project/response/'+id, headers=headers)
+    data = response.content
+    json_data = json.loads(data.decode('utf-8'))
+
+    res = ''    
+    date_before = ''
+
+    for dt in json_data['data']:
+        created_at_str = dt['created_at']
+        created_at_dt = datetime.strptime(created_at_str, '%Y-%m-%d %H:%M:%S')
+
+        if date_before == '' or date_before != created_at_dt.strftime('%d %B %Y'):
+            res += f"** ========== + {created_at_dt.strftime('%d %B %Y')} + ========== **\n\n"
+            date_before = created_at_dt.strftime('%d %B %Y')
+
+        res += (
+            f"- **{dt['response_method']}** | **Status : {dt['response_status']}** | **{round(dt['response_time'], 3)} ms**\n"
+            f"On **{dt['endpoint_name']}** from {dt['response_env']}\n"
+            f"**Response Body :** \n"
+            f"```\n{dt['id']+'/response/body'}```\n"
+        )
+
+    return res if res != '' else '*No History Found!*'
