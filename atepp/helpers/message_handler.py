@@ -1,4 +1,4 @@
-from modules.project.queries_project import get_all_my_project
+from modules.project.queries_project import get_all_my_project, get_endpoint_by_project
 
 async def on_message_handler(bot, message):
     if message.author == bot.user:
@@ -15,4 +15,9 @@ async def on_message_handler(bot, message):
     elif message.content == '1':
         res = await get_all_my_project()
         await message.channel.send(f"Showing my project :\n\n{res}")
+    elif message.content.endswith('/endpoint'):
+        project_slug = message.content[:-len('/endpoint')].strip()
+        res = await get_endpoint_by_project(project_slug)
+        await message.channel.send(f"Opening project {project_slug} :\n\n{res}")
+        
 

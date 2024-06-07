@@ -24,6 +24,37 @@ async def get_all_my_project():
             f"Created At: {created_at_dt.strftime('%d %B %Y %H:%M')}\n"
             f"Total Endpoint: {dt['total_endpoint']}\n\n"
             f"**About Project**\n{dt['project_desc'] if dt['project_desc'] else '*No Description Provided*'}\n\n"
+            f"**Show Endpoint :** \n"
+            f"```\n{dt['project_slug']+'/endpoint'}```\n"
+            f"**Project Detail :** \n"
+            f"```\n{dt['project_slug']+'/detail'}```\n\n"
         )
 
     return res
+
+async def get_endpoint_by_project(slug):
+    response = requests.get(base_url+'/api/v1/project/endpoint/project/'+slug, headers=headers)
+    data = response.content
+    json_data = json.loads(data.decode('utf-8'))
+
+    res = ''    
+    folder_before = ''
+
+    for dt in json_data['data']:
+        if folder_before == '' or folder_before != dt['folder_name']:
+            if folder_before != '':
+                res += "========== + ========== + ========== \n\n"
+            res += f"**{'Folder '+dt['folder_name'] if dt['folder_name'] else '*No Folder*'}**\n\n"
+            folder_before = dt['folder_name']
+
+        res += (
+            f"- **{dt['endpoint_method']}** | **{dt['endpoint_name']}**\n"
+            f"URL: \n{dt['endpoint_url']}\n"
+            f"**Description : **\n{dt['endpoint_desc'] if dt['endpoint_desc'] else '*No Description Provided*'}\n\n"
+            f"**Show Endpoint's Run History :** \n"
+            f"```\n{dt['id']+'/history/run'}```\n"
+            f"**Show Endpoint's Test History :** \n"
+            f"```\n{dt['id']+'/history/test'}```\n"
+        )
+
+    return res if res != '' else '*No Endpoint Found!*'
