@@ -1,4 +1,4 @@
-from modules.project.queries_project import get_all_my_project, get_endpoint_by_project, get_history_run_endpoint
+from modules.project.repositories.queries_project import get_all_my_project, get_endpoint_by_project, get_history_run_endpoint
 from helpers.typography import send_long_message
 
 async def on_message_handler(bot, message):
