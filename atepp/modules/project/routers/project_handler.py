@@ -6,9 +6,9 @@ from modules.project.firestore.commands_folder import create_folder_fs
 from modules.project.mongodb.commands_project import create_project_md
 from modules.project.mongodb.commands_folder import create_folder_md
 
-router = APIRouter()
+router_project = APIRouter()
 
-@router.post("/api/project", response_model=dict)
+@router_project.post("/api/project", response_model=dict)
 async def create_project(data: Project):
     try:
         return {
@@ -18,7 +18,7 @@ async def create_project(data: Project):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.post("/api/folder", response_model=dict)
+@router_project.post("/api/folder", response_model=dict)
 async def create_folder(data: Folder):
     try:
         return {

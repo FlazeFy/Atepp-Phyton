@@ -1,10 +1,12 @@
 from fastapi import FastAPI
-from modules.project.routers.project_handler import router
+from modules.project.routers.project_handler import router_project
+from modules.dictionary.routers.handler import router_dct
 
 app = FastAPI()
 
 # Router
-app.include_router(router)
+app.include_router(router_project)
+app.include_router(router_dct)
 
 @app.get("/")
 async def root():
