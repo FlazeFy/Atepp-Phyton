@@ -11,23 +11,21 @@ TOKEN: Final = config['TOKEN']
 client = MongoClient(TOKEN)
 db_mongo = client.test_database
 
-def get_all_my_project_md(userId):
+def get_my_variable_md(userId):
     query = {
         "created_by": userId,
-        "deleted_at": None
+        "dictionary_type": "variable"
     }
     select = {
         "_id": 1,
         "id":1,
-        "project_slug": 1,
-        "project_title": 1,
-        "project_category": 1,
-        "project_type": 1,
+        "dictionary_name": 1,
+        "dictionary_value": 1,
         "created_at": 1,
-        "project_desc": 1
+        "updated_at": 1
     }
 
-    docs = list(db_mongo.projects.find(query, select))
+    docs = list(db_mongo.dictionaries.find(query, select))
 
     for doc in docs:
         doc["_id"] = str(doc["_id"])
@@ -35,10 +33,10 @@ def get_all_my_project_md(userId):
     if docs:
         return {
             "data": docs,
-            "message": "Projects found",
+            "message": "Dictionaries found",
             "count": len(docs)
         }
     else:
         return {
-            "message": "No projects found",
+            "message": "No dictionaries found",
         }
