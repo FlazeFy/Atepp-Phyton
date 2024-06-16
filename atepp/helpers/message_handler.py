@@ -1,5 +1,6 @@
 from modules.project.repositories.queries_project import get_all_my_project, get_endpoint_by_project, get_history_run_endpoint
 from modules.dictionary.repositories.queries_dictionary import get_my_dictionary
+from modules.user.repositories.queries_user import get_my_profile
 from helpers.typography import send_long_message
 
 async def on_message_handler(bot, message):
@@ -9,7 +10,7 @@ async def on_message_handler(bot, message):
     if bot.user.mentioned_in(message):
         server_name = message.guild.name if message.guild else 'Unknown Server'
         await message.channel.send(f'Hello! everyone in {server_name}. Im Atepp Bot, what do you want me to do?')
-        await message.channel.send('1. Show my project\n2. Show my variable')
+        await message.channel.send('1. Show my project\n2. Show my variable\n3. Show my profile')
 
     if message.content == '!ping':
         server_name = message.guild.name if message.guild else 'Unknown Server'
@@ -27,6 +28,9 @@ async def on_message_handler(bot, message):
                 [res, _, _] = await get_my_dictionary(currentPage=page)
                 await message.channel.send(f"Showing my dictionaries in Page {page}/{total_page}:\n\n{res}")
                 page += 1
+    elif message.content == '3':
+        res = await get_my_profile(id="2d98f524-de02-11ed-b5ea-0242ac120002")
+        await message.channel.send(f"Showing my profile :\n\n{res}")
             
     elif message.content.endswith('/endpoint'):
         project_slug = message.content[:-len('/endpoint')].strip()
