@@ -1,5 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from configs.configs import meta
+from sqlalchemy import Table,Column
+from sqlalchemy.sql.sqltypes import String,DateTime,JSON
 
 class Folder(BaseModel):
     id: str = Field(..., min_length=36, max_length=36)
@@ -16,3 +19,17 @@ class Folder(BaseModel):
     updated_by: Optional[str] = None
     deleted_at: Optional[str] = None
     deleted_by: Optional[str] = None
+
+model_all_folder=Table(
+    'folder',meta,
+    Column('id',String(36),primary_key=True),
+    Column('project_id',String(36)),
+    Column('folder_slug',String(46)),
+    Column('folder_name',String(36)),
+    Column('folder_pin_code',String(36),nullable=True),
+    Column('folder_desc',String(144),nullable=True),
+
+    # Props
+    Column('created_at',DateTime),
+    Column('created_by',String(36)),
+)

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from modules.project.routers.project_handler import router_project
 from modules.dictionary.routers.handler import router_dct
 from modules.project.routers.comment_handler import router_comment
+from modules.project.routers.folder_handler import router_folder
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -31,6 +32,7 @@ app.add_middleware(
 app.include_router(router_project)
 app.include_router(router_dct)
 app.include_router(router_comment)
+app.include_router(router_folder)
 
 @app.get("/")
 async def root():
