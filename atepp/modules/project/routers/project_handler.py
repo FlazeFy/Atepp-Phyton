@@ -6,6 +6,7 @@ from modules.project.firestore.commands_folder import create_folder_fs
 from modules.project.firestore.queries_project import get_all_my_project_fs
 from modules.project.mongodb.commands_project import create_project_md
 from modules.project.mongodb.commands_folder import create_folder_md
+from modules.project.repositories.queries_project import get_all_project
 from modules.project.mongodb.queries_project import get_all_my_project_md
 
 router_project = APIRouter()
@@ -22,6 +23,14 @@ async def get_all_my_project_v1(id: str):
 async def get_all_my_project_v2(id: str):
     try:
         return get_all_my_project_md(userId=id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+# GET Query (Admin)
+@router_project.get("/api/v3/project", response_model=dict)
+async def get_all_project_v3():
+    try:
+        return get_all_project()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

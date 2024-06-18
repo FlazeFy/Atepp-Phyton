@@ -1,5 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from configs.configs import meta
+from sqlalchemy import Table,Column
+from sqlalchemy.sql.sqltypes import String,DateTime,SmallInteger
 
 class Project(BaseModel):
     id: str = Field(..., min_length=36, max_length=36)
@@ -18,3 +21,18 @@ class Project(BaseModel):
     updated_by: Optional[str] = None
     deleted_at: Optional[str] = None
     deleted_by: Optional[str] = None
+
+model_all_project=Table(
+    'project',meta,
+    Column('id',String(36),primary_key=True),
+    Column('project_slug',String(85)),
+    Column('project_title',String(75)),
+    Column('project_category',String(36)),
+    Column('project_type',String(14)),
+    Column('project_desc',String(1000),nullable=True),
+
+    # Props
+    Column('created_at',DateTime),
+    Column('created_by',String(36)),
+    Column('deleted_at',DateTime,nullable=True),
+)

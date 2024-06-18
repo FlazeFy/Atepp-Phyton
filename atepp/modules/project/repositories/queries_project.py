@@ -1,6 +1,11 @@
 import requests
 import json
 from datetime import datetime
+from configs.configs import con
+from sqlalchemy import select, desc, and_, func
+from modules.project.models.project import model_all_project
+from modules.endpoint.models.models_endpoint import model_all_endpoint
+from modules.user.models.models_user import user
 
 base_url = 'http://127.0.0.1:8000'
 headers = {
@@ -81,3 +86,46 @@ async def get_history_run_endpoint(id):
         )
 
     return res if res != '' else '*No History Found!*'
+
+def get_all_project():
+    # Query builder
+    query = select(
+        model_all_project.c.id,
+        model_all_project.c.project_slug, 
+        model_all_project.c.project_title, 
+        model_all_project.c.project_category, 
+        model_all_project.c.project_type,
+        model_all_project.c.project_desc,
+        model_all_project.c.created_at,
+        user.c.username,
+        func.count(model_all_endpoint.c.id).label('total_endpoint')
+    ).outerjoin(
+        model_all_endpoint, model_all_endpoint.c.project_id == model_all_project.c.id
+    ).join(
+        user, user.c.id == model_all_project.c.created_by
+    ).where(
+        model_all_project.c.deleted_at.is_(None)
+    ).group_by(
+        model_all_project.c.id
+    ).order_by(
+        desc(model_all_project.c.created_at),
+        desc(model_all_project.c.project_title),
+    )
+
+    # Exec
+    result = con.execute(query)
+    data = result.fetchall()
+    data_list = [dict(row._mapping) for row in data]
+
+    if data_list:
+        return {
+            "data": data_list,
+            "message": "Projects found",
+            "count": len(data)
+        }
+    else:
+        return {
+            "message": "No projects found",
+        }
+
+
