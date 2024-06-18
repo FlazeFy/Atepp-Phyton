@@ -97,7 +97,7 @@ def get_all_project():
         model_all_project.c.project_type,
         model_all_project.c.project_desc,
         model_all_project.c.created_at,
-        user.c.username,
+        user.c.username.label('created_by'),
         func.count(model_all_endpoint.c.id).label('total_endpoint')
     ).outerjoin(
         model_all_endpoint, model_all_endpoint.c.project_id == model_all_project.c.id
@@ -108,6 +108,7 @@ def get_all_project():
     ).group_by(
         model_all_project.c.id
     ).order_by(
+        model_all_project.c.project_category,
         desc(model_all_project.c.created_at),
         desc(model_all_project.c.project_title),
     )
